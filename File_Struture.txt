@@ -1,0 +1,17 @@
+multilang-chatbot-rag/
+├─ backend/
+│  ├─ package.json
+│  ├─ src/
+│  │  ├─ index.js
+│  │  ├─ config.js
+│  │  ├─ routes/
+│  │  └─ adapters/
+├─ ingestion/
+│  ├─ sources.csv
+│  └─ ingest.py    (we'll fill later)
+├─ infra/
+│  └─ docker-compose.yml
+├─ frontend/
+│  └─ README.md
+├─ .env.example
+└─ README.md
