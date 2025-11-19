@@ -1,5 +1,5 @@
 # ingestion/upsert_vectors_chroma.py
-import os, time
+'''import os, time
 from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extras import DictCursor
@@ -139,3 +139,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''

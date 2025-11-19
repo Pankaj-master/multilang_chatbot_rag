@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+
+# Environment variables
+.env
+
+# FAISS / Chroma index files
+*.bin
+*.pkl
+*.npy
+*.index
+
+# Ingestion outputs
+ingestion/faiss_index.bin
+ingestion/faiss_meta.pkl
+
+# Node / Frontend (if present)
+node_modules/
+dist/
+build/
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db

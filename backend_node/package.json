@@ -1,0 +1,21 @@
+{
+  "name": "multilang_chatbot_backend_node",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "openai": "^4.9.0",
+    "pg": "^8.11.0",
+    "redis": "^4.6.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
