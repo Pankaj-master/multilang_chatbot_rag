@@ -1,0 +1,27 @@
+# Python virtual environment
+.venv/
+env/
+venv/
+
+# Byte-compiled / cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+
+# FastAPI/Temp
+tmp_ingest/
+
+# Config
+.env
+*.env
+
+# Build
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db

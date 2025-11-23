@@ -1,0 +1,4 @@
+source_id,title,type,language,author,publisher,year,source_url,license,notes
+charaka_en,Charaka Samhita - PV Sharma,pdf,sa/en,P.V. Sharma,PublisherX,2017,https://archive.org/details/charaka_en,public-domain,English translation
+icmr_ifct,ICMR IFCT 2017,csv,en,ICMR,NIN,2017,https://icmr.nic.in/ifct2017.csv,cc-by,food composition
+ministry_ayush,Ministry of AYUSH Guidelines,url,en,Ministry of AYUSH,Government,2021,https://ayush.gov.in,public-domain,official guidance

@@ -1,0 +1,52 @@
+# Web / API
+fastapi==0.95.2
+uvicorn[standard]==0.22.0
+python-multipart==0.0.6
+pydantic==1.10.11
+
+# DB / Cache
+psycopg2-binary==2.9.7
+redis==4.6.0
+asyncpg==0.28.0
+
+# Vector DB / embeddings / LLM clients
+openai==1.80.0
+pinecone-client==2.2.2
+
+# Sentence Transformers + Transformers (embeddings / reranker)
+sentence-transformers==2.2.2
+transformers==4.35.0
+accelerate==0.22.0
+
+# Numeric & ML
+torch==2.2.0    # install CPU or GPU variant depending on your platform; change if needed
+numpy==1.26.2
+
+# PDF / OCR / images
+pymupdf==1.22.0       # fitz
+pdf2image==1.16.3
+pytesseract==0.3.11
+Pillow==10.0.1
+
+# Scraping / requests
+requests==2.31.0
+beautifulsoup4==4.12.2
+readability-lxml==0.8.1
+
+# CSV / Excel
+pandas==2.2.3
+openpyxl==3.1.2
+
+# Utilities
+python-dotenv==1.0.0
+python-dateutil==2.8.2
+tqdm==4.66.1
+
+# Dev / Testing
+pytest==7.4.2
+
+# Optional: fasttext (only if you plan to provide lid models)
+# fasttext==0.9.2
+
+# Optional: sentence-transformer cross-encoder model runtime dependency
+# (no extra pip package required; model loaded via sentence-transformers)

@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "title": "ChatbotResponseSchema",
+  "description": "Schema for structured responses returned by the LLM.",
+  "properties": {
+    "answer": {
+      "type": "string",
+      "description": "Main textual answer to the user, written in the requested language."
+    },
+    "cards": {
+      "type": "array",
+      "description": "Optional UI cards to display structured information such as nutrition facts, food items, or product summaries.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Short heading for the card."
+          },
+          "description": {
+            "type": "string",
+            "description": "A concise explanation related to this card."
+          },
+          "image_url": {
+            "type": "string",
+            "description": "Optional image for the card (thumbnail or external URL).",
+            "nullable": true
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Indicates the KB source (doc_id or URL) used for this card.",
+            "nullable": true
+          }
+        },
+        "required": ["title", "description"]
+      }
+    },
+    "buttons": {
+      "type": "array",
+      "description": "Optional follow-up options to guide the user within the chatbot.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "What is shown on the button."
+          },
+          "value": {
+            "type": "string",
+            "description": "The message sent back to the chatbot when the button is clicked."
+          }
+        },
+        "required": ["label", "value"]
+      }
+    }
+  },
+  "required": ["answer"]
+}

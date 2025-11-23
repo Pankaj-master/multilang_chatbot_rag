@@ -1,0 +1,29 @@
+# Python virtual envs
+.venv/
+env/
+venv/
+backend/app/.venv/
+
+# Conda installer
+miniconda.ex
+
+# Node
+node_modules/
+
+# Caches
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temp / app-specific
+tmp_ingest/
+rag_app.log

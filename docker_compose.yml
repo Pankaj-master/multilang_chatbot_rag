@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rag_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./backend/app
+      dockerfile: Dockerfile
+    container_name: rag-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/app/.env
+    environment:
+      # override defaults if needed
+      PG_DSN: "postgresql://postgres:postgres@postgres:5432/rag_db"
+      REDIS_URL: "redis://redis:6379/0"
+      # ensure app listens on 0.0.0.0 and uses port 8001 for compose
+      PORT: "8001"
+    ports:
+      - "8001:8000"
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    image: node:18
+    container_name: rag-frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE=http://host.docker.internal:8001
+    command: ["sh", "-c", "npm install --legacy-peer-deps && npm run dev -- --host 0.0.0.0 --port 5173"]
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

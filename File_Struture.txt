@@ -1,0 +1,74 @@
+multilang_chatbot_rag/
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py                 # FastAPI entry → /chat, /ingest
+│   │   ├── routes/
+│   │   │   ├── chat.py             # Chat endpoint
+│   │   │   ├── ingest.py           # Upload new PDFs/CSVs/Web URLs
+│   │   │   ├── health.py           # /health endpoint
+│   │   │
+│   │   ├── services/
+│   │   │   ├── retriever.py        # Vector DB + BM25 hybrid retrieval
+│   │   │   ├── reranker.py         # LLM/CLIP reranker (optional)
+│   │   │   ├── llm.py              # Gemini/Perplexity wrapper
+│   │   │   ├── embeddings.py       # Gemini/OpenAI embeddings
+│   │   │   ├── db.py               # Postgres connector
+│   │   │   ├── cache.py            # Redis connector
+│   │   │   ├── images.py           # Image fetching + indexing
+│   │   │
+│   │   ├── ingestion/
+│   │   │   ├── ingest.py           # Master ingestion pipeline (PDF/CSV/URL/API)
+│   │   │   ├── pdf_loader.py
+│   │   │   ├── csv_loader.py
+│   │   │   ├── excel_loader.py
+│   │   │   ├── web_loader.py
+│   │   │   ├── api_loader.py
+│   │   │   ├── chunker.py
+│   │   │   ├── upsert.py
+│   │   │
+│   │   ├── prompts/
+│   │   │   ├── system_prompt.txt   # KB-only system instructions
+│   │   │   ├── output_schema.json   # cards/buttons format
+│   │   │
+│   │   ├── schemas/
+│   │   │   ├── chat_request.py
+│   │   │   ├── chat_response.py
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── file_utils.py
+│   │   │   ├── text_cleaner.py
+│   │   │   ├── logging_utils.py
+│   │   │
+│   │   ├── requirements.txt
+│   │   └── Dockerfile
+│
+│   ├── backend_node/               # (optional, keep or delete)
+│   │   └── routes/...
+│
+├── ingestion/                      # Keep this if your team prefers
+│   ├── load_pdfs.py                # Helper dev scripts (optional)
+│   ├── load_csvs.py
+│   ├── test_ingest.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── pages/
+│   │   │   ├── Chatbot.jsx         # Web UI
+│   │   ├── components/
+│   │   │   ├── ChatInterface.jsx
+│   │   │   ├── Carousel.jsx
+│   │   │   ├── ImageCard.jsx
+│   │   ├── api/
+│   │   │   ├── rag.js              # fetch("/chat")
+│   │   ├── utils/
+│   │   │   ├── converters.js
+│   │   │   ├── parser.js
+│   │   ├── App.jsx
+│   ├── package.json
+│
+├── test_conn.py
+├── create_db.py
+├── create_tables.py
+├── README.md
+└── .gitignore

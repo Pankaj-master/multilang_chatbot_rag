@@ -1,0 +1,6 @@
+﻿
+openapi info                                                                                                                      paths                    
+------- ----                                                                                                                      -----                    
+3.1.0   @{title=Multilang RAG Chatbot; description=RAG-based chatbot for nutrition knowledge base (PDF/CSV/URLs).; version=0.1.0} @{/chat/=; /ingest/upl...
+
+
