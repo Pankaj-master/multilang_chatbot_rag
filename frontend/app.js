@@ -50,10 +50,10 @@ async function sendMessage(text) {
   input.disabled = true;
 
   try {
-    const resp = await fetch(`${BACKEND}/api/chat`, {
+    const resp = await fetch(`${BACKEND}/chat/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ user_id: 'web-client', text })
+      body: JSON.stringify({ message: text, language: 'en', history: [] })
     });
 
     // try parse JSON even for non-200 to get debug field
@@ -62,11 +62,11 @@ async function sendMessage(text) {
     // remove placeholder
     placeholder.remove();
 
-    if (resp.ok && data && data.reply) {
-      appendMessage('assistant', data.reply);
+    if (resp.ok && data && data.answer) {
+      appendMessage('assistant', data.answer);
 
-      // optionally show retrieved snippets in console
-      if (data.retrieved) console.log('Retrieved:', data.retrieved);
+      // optionally show retrieved sources in console
+      if (data.sources) console.log('Sources:', data.sources);
 
       // if you want a collapsed raw view in dev:
       if (data.raw) {

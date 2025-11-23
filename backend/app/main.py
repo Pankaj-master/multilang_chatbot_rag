@@ -1,8 +1,14 @@
 # backend/app/main.py
 import os
 import logging
+from pathlib import Path
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+# Load environment variables from .env file
+env_path = Path(__file__).parent.parent.parent / ".env"
+load_dotenv(dotenv_path=env_path)
 
 # initialize logging first
 from .utils.logging_utils import init_logging, get_logger, fastapi_logging_middleware

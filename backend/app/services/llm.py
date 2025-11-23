@@ -29,6 +29,8 @@ logger = logging.getLogger("rag_app.llm")
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").lower()  # "openai" | "gemini" | "perplexity"
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", None)
 OPENAI_CHAT_MODEL = os.getenv("OPENAI_CHAT_MODEL", "gpt-4o-mini")  # fallback model
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", None)
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 
 # Optional caching hooks
 _try_cache = False
@@ -46,6 +48,17 @@ try:
 except Exception:
     _try_openai = False
     logger.debug("openai package not installed; OpenAI fallback disabled.")
+
+# Optional Google Generative AI import
+_try_gemini = False
+try:
+    import google.generativeai as genai  # type: ignore
+    if GEMINI_API_KEY:
+        genai.configure(api_key=GEMINI_API_KEY)
+    _try_gemini = True
+except Exception:
+    _try_gemini = False
+    logger.debug("google-generativeai package not installed; Gemini disabled.")
 
 
 # -------------------------
@@ -127,13 +140,52 @@ async def _call_openai_chat(messages: List[Dict[str, str]], model: Optional[str]
     return await loop.run_in_executor(None, lambda: _call_openai_chat_sync(messages, model=model, max_tokens=max_tokens, temperature=temperature))
 
 
-async def _call_gemini_placeholder(messages: List[Dict[str, str]], **kwargs) -> str:
+def _call_gemini_sync(messages: List[Dict[str, str]], model: Optional[str] = None, max_tokens: int = 800, temperature: float = 0.0) -> str:
     """
-    Placeholder for Google Gemini chat call.
-    Implement provider-specific HTTP client here using Google's Generative API (or SDK).
-    Return text content (string).
+    Synchronous Google Gemini API call.
     """
-    raise NotImplementedError("Gemini call not implemented. Add provider-specific client code here.")
+    if not _try_gemini:
+        raise RuntimeError("google-generativeai package not installed. Install with: pip install google-generativeai")
+    if not GEMINI_API_KEY:
+        raise RuntimeError("GEMINI_API_KEY not set.")
+    
+    model_to_use = model or GEMINI_MODEL
+    gemini_model = genai.GenerativeModel(model_to_use)
+    
+    # Convert chat messages to Gemini format
+    # Gemini expects alternating user/model messages or a single prompt
+    # We'll combine system + user messages into a single prompt
+    prompt_parts = []
+    for msg in messages:
+        role = msg["role"]
+        content = msg["content"]
+        if role == "system":
+            prompt_parts.append(f"System Instructions: {content}")
+        elif role == "user":
+            prompt_parts.append(f"User: {content}")
+        elif role == "assistant":
+            prompt_parts.append(f"Assistant: {content}")
+    
+    full_prompt = "\n\n".join(prompt_parts)
+    
+    # Generate response
+    response = gemini_model.generate_content(
+        full_prompt,
+        generation_config=genai.types.GenerationConfig(
+            max_output_tokens=max_tokens,
+            temperature=temperature,
+        )
+    )
+    
+    return response.text
+
+
+async def _call_gemini(messages: List[Dict[str, str]], model: Optional[str] = None, max_tokens: int = 800, temperature: float = 0.0) -> str:
+    """
+    Async wrapper for Gemini API call.
+    """
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, lambda: _call_gemini_sync(messages, model=model, max_tokens=max_tokens, temperature=temperature))
 
 
 async def _call_perplexity_placeholder(messages: List[Dict[str, str]], **kwargs) -> str:
@@ -201,7 +253,7 @@ async def generate_answer(
             if provider == "openai":
                 raw_text = await _call_openai_chat(messages, model=model, max_tokens=max_tokens, temperature=temperature)
             elif provider == "gemini":
-                raw_text = await _call_gemini_placeholder(messages, model=model, max_tokens=max_tokens, temperature=temperature)
+                raw_text = await _call_gemini(messages, model=model, max_tokens=max_tokens, temperature=temperature)
             elif provider == "perplexity":
                 raw_text = await _call_perplexity_placeholder(messages, model=model, max_tokens=max_tokens, temperature=temperature)
             else:

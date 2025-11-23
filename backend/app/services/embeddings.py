@@ -30,9 +30,11 @@ import math
 
 logger = logging.getLogger("rag_app.embeddings")
 
-EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "openai").lower()
+EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "gemini").lower()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 OPENAI_EMBEDDING_MODEL = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GEMINI_EMBEDDING_MODEL = os.getenv("GEMINI_EMBEDDING_MODEL", "models/text-embedding-004")
 LOCAL_EMBEDDING_MODEL = os.getenv("LOCAL_EMBEDDING_MODEL", "all-MiniLM-L6-v2")
 BATCH_SIZE = int(os.getenv("EMBEDDING_BATCH_SIZE", "64"))
 RETRY_COUNT = int(os.getenv("EMBEDDING_RETRY", "2"))
@@ -62,6 +64,15 @@ try:
     _try_sentence = True
 except Exception:
     _try_sentence = False
+
+_try_gemini = False
+try:
+    import google.generativeai as genai  # type: ignore
+    if GEMINI_API_KEY:
+        genai.configure(api_key=GEMINI_API_KEY)
+    _try_gemini = True
+except Exception:
+    _try_gemini = False
 
 
 # ---------- Helper utilities ----------
@@ -107,11 +118,28 @@ def _local_embed_batch(texts: List[str], model_name: Optional[str] = None) -> Li
     return [v.tolist() for v in vecs]
 
 
-def _gemini_embed_batch_placeholder(texts: List[str]) -> List[List[float]]:
-    raise NotImplementedError(
-        "Gemini embeddings are not implemented in this helper. "
-        "Add provider-specific code to call Gemini embeddings API and return vectors."
-    )
+def _gemini_embed_batch(texts: List[str], model: Optional[str] = None) -> List[List[float]]:
+    """
+    Embed texts using Google Gemini API.
+    """
+    if not _try_gemini:
+        raise RuntimeError("google-generativeai package not installed. Install with: pip install google-generativeai")
+    if not GEMINI_API_KEY:
+        raise RuntimeError("GEMINI_API_KEY is not set in environment.")
+    
+    model_to_use = model or GEMINI_EMBEDDING_MODEL
+    
+    # Gemini embedding API
+    vectors = []
+    for text in texts:
+        result = genai.embed_content(
+            model=model_to_use,
+            content=text,
+            task_type="retrieval_document"
+        )
+        vectors.append(result['embedding'])
+    
+    return vectors
 
 
 def _perplexity_embed_batch_placeholder(texts: List[str]) -> List[List[float]]:
@@ -130,7 +158,7 @@ def _embed_batch_dispatcher(texts: List[str], provider: Optional[str] = None) ->
     if prov == "local":
         return _local_embed_batch(texts)
     if prov == "gemini":
-        return _gemini_embed_batch_placeholder(texts)
+        return _gemini_embed_batch(texts)
     if prov == "perplexity":
         return _perplexity_embed_batch_placeholder(texts)
     raise RuntimeError(f"Unsupported embedding provider: {prov}")
